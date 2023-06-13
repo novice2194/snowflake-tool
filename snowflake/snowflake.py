@@ -12,10 +12,11 @@ from threading import Lock
 __version__ = "1.0"
 
 
-class Node:
-    __id = 0
-    __machine_size = 10
-    __sequence_size = 12
+class ID:
+    __id: int
+    __machine_size: int
+    __sequence_size: int
+    __epoch: int
 
     def __init__(self, snowflake_id=0, machine_size=10,
                  sequence_size=12, epoch=1288834974657):
@@ -50,26 +51,37 @@ class Node:
         self.__id = snowflake_id
         self.__machine_size = machine_size
         self.__sequence_size = sequence_size
+        self.__epoch = epoch
 
     @property
     def id(self):
         return self.__id
+
+    @property
+    def epoch(self):
+        return self.__epoch
+
+    @property
+    def timestamp(self):
+        return self.__id >> (self.__machine_size + self.__sequence_size) + self.__epoch
+
+    def machine_id(self):
+        return (self.__id >> self.__sequence_size) & ((1 << self.__machine_size) - 1)
 
     def __str__(self):
         return str(self.__id)
 
 
 class Snowflake:
-    __epoch = 1288834974657
+    __epoch: int
     __sequence = 0
-    __sequence_size = 12
-    __sequence_mask = (1 << __sequence_size) - 1
-    __machine_size = 10
-    __machine_shift = __sequence_size
-    __machine_mask = (1 << __machine_size) - 1
+    __sequence_size: int
+    __sequence_mask: int
+    __machine_id: int
+    __machine_size: int
+    __machine_shift: int
     __timestamp_size = 41
-    __timestamp_shift = __machine_shift + __machine_size
-    __timestamp_mask = (1 << __timestamp_size) - 1
+    __timestamp_shift: int
     __lock = None
 
     def __init__(self, machine_id=0, machine_size=10,
@@ -78,7 +90,7 @@ class Snowflake:
         :param machine_id: min=0, max=(1<<machine_size)-1
         :param machine_size: min=1, max=21
         :param sequence_size: min=1, max=21
-        :param epoch: min=0, max=now(), default: Twitter
+        :param epoch: min=0, max=now(), default: twitter epoch
 
         Note: machine_size + sequence.size <= 22
         """
@@ -99,23 +111,50 @@ class Snowflake:
                   f"but now is {epoch}"
 
         self.__epoch = epoch
+        self.__sequence_size = sequence_size
+        self.__sequence_mask = (1 << sequence_size) - 1
         self.__machine_id = machine_id
         self.__machine_size = machine_size
-        self.__sequence_size = sequence_size
+        self.__machine_shift = sequence_size
+        self.__timestamp_shift = sequence_size + machine_size
         self.__lock = Lock()
 
-    def generate(self) -> Node:
+    def generate(self) -> ID:
+        """
+        generate a snowflake id
+        :return: id class
+        """
         with self.__lock:
             now = int(time.time() * 1000) - self.__epoch
             _id = 0
             _id |= ((now << self.__timestamp_shift) |
                     (self.__machine_id << self.__machine_shift) |
                     self.__sequence)
-            node = Node(snowflake_id=_id,
-                        machine_size=self.__machine_size,
-                        sequence_size=self.__sequence_size)
+            node = ID(snowflake_id=_id,
+                      machine_size=self.__machine_size,
+                      sequence_size=self.__sequence_size)
             self.__sequence = (self.__sequence + 1) & self.__sequence_mask
             return node
+
+    @classmethod
+    def parse(cls, snowflake_id=0, machine_size=10,
+              sequence_size=12, epoch=1288834974657) -> ID:
+        """
+       :param snowflake_id: snowflake id
+       :param machine_size: min=1, max=21
+       :param sequence_size: min=1, max=21
+       :param epoch: min=0, max=now()
+       Note: machine_size + sequence.size <= 22
+       """
+        return ID(snowflake_id, machine_size, sequence_size, epoch)
+
+    @property
+    def epoch(self):
+        return self.__epoch
+
+    @property
+    def machine(self):
+        return self.__machine_id, self.__machine_size
 
     def __str__(self):
         return str(self.__dir__())

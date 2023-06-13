@@ -19,4 +19,5 @@ def test_generate():
     for i in range(int(1e5)):
         _id = node.generate()
         generate_id.append(_id.id)
+    assert len(generate_id) == len(set(generate_id))
     print(int((time.time() - start) * 1000), "ms")

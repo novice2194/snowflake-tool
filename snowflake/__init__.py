@@ -5,5 +5,5 @@
 # Software: PyCharm
 
 from .snowflake import Snowflake
-from .snowflake import Node
+from .snowflake import ID
 
