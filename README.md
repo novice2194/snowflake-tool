@@ -4,9 +4,9 @@ Snowflake tool is a Python library that implements the Snowflake algorithm and i
 The default Twitter format shown below.
 
 ```text
-+--------------------------------------------------------------------------+
++------------------------------------------------------------------------------+
 | 1 Bit Unused | 41 Bit Timestamp |  10 Bit Machine ID  |   12 Bit Sequence ID |
-+--------------------------------------------------------------------------+
++------------------------------------------------------------------------------+
 ```
 ## Install
 
