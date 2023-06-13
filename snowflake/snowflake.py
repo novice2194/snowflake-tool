@@ -9,8 +9,6 @@ pysnowflake provides a simple Twitter snowflake generator and parser.
 import time
 from threading import Lock
 
-__version__ = "1.0"
-
 
 class ID:
     __id: int

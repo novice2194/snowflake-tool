@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="snowflake-tool",
-    version="1.0.0",
+    version="1.1.0",
     author="novice2194",
     author_email="2194150786@qq.com",
     url="https://github.com/novice2194/snowflake-tool",
