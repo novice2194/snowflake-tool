@@ -13,6 +13,7 @@ setup(
     author="novice2194",
     author_email="2194150786@qq.com",
     url="https://github.com/novice2194/snowflake-tool",
+    license="MIT",
     packages=find_packages(),
     description="Simple snowflake id generator",
     long_description=open(join(dirname(__file__), 'README.md')).read(),

@@ -158,3 +158,6 @@ class Snowflake:
 
     def __str__(self):
         return str(self.__dir__())
+
+    def __next__(self):
+        return self.generate()
