@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/pysnowflakes.iml" filepath="$PROJECT_DIR$/.idea/pysnowflakes.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/snowflake-tool.iml" filepath="$PROJECT_DIR$/.idea/snowflake-tool.iml" />
     </modules>
   </component>
 </project>
